@@ -3,82 +3,140 @@
 
 names(benzina_data)
 
+#Analisi andamento prezzo benzina
 
+prezzi_annuali_benzina <- benzina_data[benzina_data$ANNO >= 2019, ]
+prezzi_annuali_benzina$mese<-paste(prezzi_annuali_benzina$NOME_MESE,prezzi_annuali_benzina$ANNO, sep = " ")
+prezzi_annuali_benzina$mese <- factor(prezzi_annuali_benzina$mese,levels = unique(prezzi_annuali_benzina$mese))
 
-
-media_prezzi_annuali <- aggregate(PREZZO ~ ANNO, benzina_data, mean)
 
 # Crea il grafico a linea per la media dei prezzi annuali
-ggplot(media_prezzi_annuali, aes(x = ANNO, y = PREZZO)) +
+ggplot(prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group = 1)) +
   geom_line(color = "blue", size = 1) +
   labs(
-    title = "Media dei Prezzi per Anno",
-    x = "Anno",
-    y = "Prezzo Medio Annuale"
-  )+theme_minimal()
+    title = "Variazione prezzo al variare del mese",
+    x = "Mese e Anno",
+    y = "Prezzo"
+  )+theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
-media_iva_annuale <- aggregate(NETTO ~ ANNO, benzina_data, mean)
+#Analisi impatto tasse su prezzo attuale
 
-# Crea il grafico a linea per la media dei prezzi annuali
-ggplot(media_iva_annuale, aes(x = ANNO, y = NETTO)) +
-  geom_line(color = "blue", size = 1) +
+ggplot(prezzi_annuali_benzina) +
+  geom_line(aes(x = mese, y = PREZZO,group = 1), color = "blue", size = 1) +  # Grafico dei prezzi
+  geom_line(aes(x = mese, y = NETTO,group = 1), color = "red", size = 1) +  # Grafico dell'IVA
   labs(
-    title = "Media dell'IVA per Anno",
-    x = "Anno",
-    y = "IVA Media Annuale"
-  )+theme_minimal()
-
-ggplot() +
-  geom_line(data = media_prezzi_annuali, aes(x = ANNO, y = PREZZO), color = "blue", size = 1) +  # Grafico dei prezzi
-  geom_line(data = media_iva_annuale, aes(x = ANNO, y = NETTO), color = "red", size = 1) +  # Grafico dell'IVA
-  labs(
-    title = "Confronto Prezzo e IVA medi per Anno",
-    x = "Anno",
-    y = "Valore"
+    title = "Confronto prezzo benzina senza tasse e comprensivo di tasse",
+    x = "Mese e Anno",
+    y = "Prezzo"
   ) +
-  theme_minimal()
+  scale_color_manual(values=c("Prezzo"="blue", "IVA" = "red"))+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+dati <- data.frame(
+  categoria = c("Taxes", "Net value"),
+  valore = c(669.83, 234.05)
+)
+
+dati$percentuale <- scales::percent(dati$valore / sum(dati$valore))
+
+ggplot(dati, aes(x = "", y = valore, fill = categoria, label = percentuale)) +
+  geom_bar(stat = "identity") +
+  geom_text(position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  labs(title = "Grafico a Torta", fill = "Categoria") +
+  theme_minimal()+
+  theme(axis.text.y = element_blank(), axis.text.x = element_blank())
 
 
+#Analisi gasolio
 
 names(gasolio_data)
 
-media_prezzoG_annuale <- aggregate(PREZZO ~ ANNO, gasolio_data, mean)
-ggplot(media_prezzoG_annuale, aes(x = ANNO, y = PREZZO)) +
+prezzoG_annuale <- gasolio_data[gasolio_data$ANNO >= 2019, ]
+prezzoG_annuale$mese<-paste(prezzoG_annuale$NOME_MESE,prezzoG_annuale$ANNO, sep = " ")
+prezzoG_annuale$mese <- factor(prezzoG_annuale$mese,levels = unique(prezzoG_annuale$mese))
+
+ggplot(prezzoG_annuale, aes(x = mese, y = PREZZO,group=1)) +
   geom_line(color = "blue", size = 1) +
   labs(
-    title = "Media dei Prezzi per Anno",
-    x = "Anno",
-    y = "Prezzo Medio Annuale"
-  )+theme_minimal()
+    title = "ariazione prezzo al variare del mese",
+    x = "Mese e Anno",
+    y = "Prezzo"
+  )+theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
-ggplot() +
-  geom_line(data = media_prezzi_annuali, aes(x = ANNO, y = PREZZO), color = "blue", size = 1) +  # Grafico dei prezzi
-  geom_line(data = media_prezzoG_annuale, aes(x = ANNO, y = PREZZO), color = "red", size = 1) +  # Grafico dell'IVA
+#Analisi impatto tasse su gasolio
+ggplot(prezzoG_annuale) +
+  geom_line(aes(x = mese, y = PREZZO,group = 1), color = "blue", size = 1) +  # Grafico dei prezzi
+  geom_line(aes(x = mese, y = NETTO,group = 1), color = "red", size = 1) +  # Grafico dell'IVA
   labs(
-    title = "Confronto Prezzo e IVA medi per Anno",
-    x = "Anno",
-    y = "Valore"
+    title = "Confronto prezzo gasolio senza tasse e comprensivo di tasse",
+    x = "Mese e Anno",
+    y = "Prezzo"
   ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) +
-  guides(color = guide_legend(title = "Legenda"))
+  scale_color_manual(values=c("Prezzo"="blue", "IVA" = "red"))+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
+dati <- data.frame(
+  categoria = c("Taxes", "Net value"),
+  valore = c(876.12, 226.17)
+)
+
+dati$percentuale <- scales::percent(dati$valore / sum(dati$valore))
+
+ggplot(dati, aes(x = "", y = valore, fill = categoria, label = percentuale)) +
+  geom_bar(stat = "identity") +
+  geom_text(position = position_stack(vjust = 0.5)) +
+  coord_polar(theta = "y") +
+  labs(title = "Grafico a Torta", fill = "Categoria") +
+  theme_minimal()+
+  theme(axis.text.y = element_blank(), axis.text.x = element_blank())
+
+#Confronto prezzo benzina e gasolio
+ggplot() +
+  geom_line(data = prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group=1), color = "blue", size = 1) +  # Grafico dei prezzi
+  geom_line(data = prezzoG_annuale, aes(x = mese, y = PREZZO,group=1), color = "red", size = 1) +  # Grafico dell'IVA
+  labs(
+    title = "Confronto Prezzo benzina e gasolio",
+    x = "Mese e Anno",
+    y = "Prezzo"
+  ) +theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+
+#Analisi prezzo corrente
 names(corrente_data)
 
 corrente_italia<-subset(corrente_data,Country=="Italy")
+corrente_italia$Anno <- substr(corrente_italia$Date, 1, 4)
+corrente_italia<-corrente_italia[corrente_italia$Date >= 2019, ]
+corrente_italia$mese_anno<-prezzi_annuali_benzina$mese
 
-print(corrente_italia)
+corrente_italia$Prezzo <- corrente_italia$Price..EUR.MWhe.
+corrente_italia$Price..EUR.MWhe. <- NULL 
 
-corrente_italia$Date <- as.Date(corrente_italia$Date, format = "%Y-%m-%d")
-ggplot(corrente_italia, aes(x = Date, y = Price..EUR.MWhe.,group = 1)) +
-  geom_line() +
+ggplot(corrente_italia, aes(x = Date, y = Prezzo,group=1)) +
+  geom_line(color = "blue", size = 1) +
   labs(
-    title = "Prezzo in Italia MWh",
+    title = "Prezzo elettricità in Italia MWh",
     x = "Data",
     y = "Prezzo"
   ) +
-  scale_x_date(limits = c(as.Date("2019-01-01"), max(corrente_italia$Date))) +
-  
   theme_minimal()+theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+corrente_italia$Prezzo2<-corrente_italia$Prezzo+1200
+
+ggplot() +
+  geom_line(data = prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group=1), color = "blue", size = 1) +  
+  geom_line(data = prezzoG_annuale, aes(x = mese, y = PREZZO,group=1), color = "red", size = 1) +  
+  geom_line(data = corrente_italia, aes(x = mese_anno, y = Prezzo2,group=1), color = "green", size = 1) + 
+  labs(
+    title = "Confronto Andamento benzina, gasolio e corrente elettrica",
+    x = "Mese e Anno",
+    y = "Prezzo scalato"
+  ) +theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
 
 media_costo_carburante<- bind_rows(benzina_data, gasolio_data)
 
@@ -112,8 +170,11 @@ media_prezzi_carburante <- media_prezzi %>%
 # Media dei prezzi per ogni mese e anno, mantenendo l'ordine dei mesi
 print(media_prezzi_carburante)
 
+carburante <- media_prezzi_carburante[media_prezzi_carburante$ANNO >= 2019, ]
+
 ggplot(data = media_prezzi_carburante, aes(x = factor(ANNO), y = Media_Prezzo, fill = Mese)) +
   geom_bar(stat = "identity", position = "dodge") +
   labs(x = "Anno", y = "Prezzo") +
   theme_minimal()
+
 
