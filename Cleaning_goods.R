@@ -13,11 +13,11 @@ ggplot(goods_prices, aes(x = date, y=cleaning_goods)) + geom_point()+ geom_smoot
 #Correlation with fuels
 
 ggplot(data.frame(X = normalized_cleaning, Y = normalized_carburante), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between fuels and goods related to household cleaning", x = "Normalized Goods related to household cleaning", y = "Normalized fuels")
 
 # Calcola il coefficiente di correlazione di Pearson
-correlation_coefficient <- cor(goods_prices$com_service, carburante$Media_Prezzo)
+correlation_coefficient <- cor(goods_prices$cleaning_goods, carburante$Media_Prezzo)
 print(paste("Il coefficiente di correlazione di Pearson è:", correlation_coefficient))
 
 ggplot() +
@@ -35,7 +35,7 @@ ggplot() +
 
 #Correlation with electricity
 ggplot(data.frame(X = normalized_cleaning, Y = normalized_corrente), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between electricity and Goods related to household cleaning", x = "Normalized Goods related to household cleaning", y = "Normalized electricity")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -54,3 +54,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore durante anno
+ggplot(goods_prices, aes(factor(ANNO), cleaning_goods)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of cleaning goods from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

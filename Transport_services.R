@@ -13,7 +13,7 @@ ggplot(goods_prices, aes(x = date, y=transport_service)) + geom_point()+ geom_sm
 #Correlation with fuels
 
 ggplot(data.frame(X = normalized_transport, Y = normalized_carburante), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between fuels and Transport related services", x = "Normalized Transport related services", y = "Normalized fuels")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -35,7 +35,7 @@ ggplot() +
 
 #Correlation with electricity
 ggplot(data.frame(X = normalized_transport, Y = normalized_corrente), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between electricity and Transport related services", x = "Normalized Transport related services", y = "Normalized electricity price")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -53,3 +53,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore durante anno
+ggplot(goods_prices, aes(factor(ANNO), transport_service)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of transport service from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

@@ -13,7 +13,7 @@ ggplot(goods_prices, aes(x = date, y=u_food)) + geom_point()+ geom_smooth() +
 #Correlation with fuels
 
 ggplot(data.frame(X = normalized_unprocessed_food, Y = normalized_carburante), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between fuels and unprocessed_food", x = "Normalized unprocessed_food", y = "Normalized fuels")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -34,7 +34,7 @@ ggplot() +
 
 #Correlation with electricity
 ggplot(data.frame(X = normalized_unprocessed_food, Y = normalized_corrente), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between electricity and unprocessed_food", x = "Normalized unprocessed_food", y = "Normalized electricity")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -53,3 +53,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore durante anno
+ggplot(goods_prices, aes(factor(ANNO), u_food)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of unprocessed food from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

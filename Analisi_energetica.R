@@ -10,13 +10,21 @@ prezzi_annuali_benzina$mese<-paste(prezzi_annuali_benzina$NOME_MESE,prezzi_annua
 prezzi_annuali_benzina$mese <- factor(prezzi_annuali_benzina$mese,levels = unique(prezzi_annuali_benzina$mese))
 
 
+ggplot(prezzi_annuali_benzina, aes(factor(ANNO), PREZZO)) + geom_boxplot() +
+ labs(
+  title= "Price variation of petrol from 2019 to 2023",
+  x = "Year", 
+  y = "Price")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 
+
+
 # Crea il grafico a linea per la media dei prezzi annuali
 ggplot(prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group = 1)) +
   geom_line(color = "blue", size = 1) +
   labs(
-    title = "Variazione prezzo al variare del mese",
-    x = "Mese e Anno",
-    y = "Prezzo"
+    title = "Price variation of petrol from 2019 to 2023",
+    x = "Date",
+    y = "Price"
   )+theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
 #Analisi impatto tasse su prezzo attuale
@@ -25,16 +33,16 @@ ggplot(prezzi_annuali_benzina) +
   geom_line(aes(x = mese, y = PREZZO,group = 1), color = "blue", size = 1) +  # Grafico dei prezzi
   geom_line(aes(x = mese, y = NETTO,group = 1), color = "red", size = 1) +  # Grafico dell'IVA
   labs(
-    title = "Confronto prezzo benzina senza tasse e comprensivo di tasse",
-    x = "Mese e Anno",
-    y = "Prezzo"
+    title = "Price of petrol without taxes and with taxes",
+    x = "Date",
+    y = "Price"
   ) +
   scale_color_manual(values=c("Prezzo"="blue", "IVA" = "red"))+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
 dati <- data.frame(
   categoria = c("Taxes", "Net value"),
-  valore = c(669.83, 234.05)
+  valore = c(1040.51, 690.29)
 )
 
 dati$percentuale <- scales::percent(dati$valore / sum(dati$valore))
@@ -43,10 +51,20 @@ ggplot(dati, aes(x = "", y = valore, fill = categoria, label = percentuale)) +
   geom_bar(stat = "identity") +
   geom_text(position = position_stack(vjust = 0.5)) +
   coord_polar(theta = "y") +
-  labs(title = "Grafico a Torta", fill = "Categoria") +
+  labs(title = "Grafico a Torta", fill = "Category") +
   theme_minimal()+
   theme(axis.text.y = element_blank(), axis.text.x = element_blank())
 
+
+#Riassunto prezzo benzina
+ggplot(prezzi_annuali_benzina, aes(factor(ANNO), PREZZO)) + geom_boxplot() +
+  labs(
+    title= "Price variation of petrol from 2019 to 2023",
+    x = "Year", 
+    y = "Price")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 
+
+#######
 
 #Analisi gasolio
 
@@ -56,12 +74,19 @@ prezzoG_annuale <- gasolio_data[gasolio_data$ANNO >= 2019, ]
 prezzoG_annuale$mese<-paste(prezzoG_annuale$NOME_MESE,prezzoG_annuale$ANNO, sep = " ")
 prezzoG_annuale$mese <- factor(prezzoG_annuale$mese,levels = unique(prezzoG_annuale$mese))
 
+ggplot(prezzoG_annuale, aes(factor(ANNO), PREZZO)) + geom_boxplot() +
+  labs(
+    title= "Price variation of diesel from 2019 to 2023",
+    x = "Year", 
+    y = "Price")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 
+
 ggplot(prezzoG_annuale, aes(x = mese, y = PREZZO,group=1)) +
   geom_line(color = "blue", size = 1) +
   labs(
-    title = "ariazione prezzo al variare del mese",
-    x = "Mese e Anno",
-    y = "Prezzo"
+    title = "Price variation of diesel from 2019 to 2023",
+    x = "Date",
+    y = "Price"
   )+theme_minimal()+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
@@ -70,16 +95,16 @@ ggplot(prezzoG_annuale) +
   geom_line(aes(x = mese, y = PREZZO,group = 1), color = "blue", size = 1) +  # Grafico dei prezzi
   geom_line(aes(x = mese, y = NETTO,group = 1), color = "red", size = 1) +  # Grafico dell'IVA
   labs(
-    title = "Confronto prezzo gasolio senza tasse e comprensivo di tasse",
-    x = "Mese e Anno",
-    y = "Prezzo"
+    title = "Comparison between diesel price without taxes and including taxes",
+    x = "Date",
+    y = "Price"
   ) +
   scale_color_manual(values=c("Prezzo"="blue", "IVA" = "red"))+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
 dati <- data.frame(
   categoria = c("Taxes", "Net value"),
-  valore = c(876.12, 226.17)
+  valore = c(904.06, 685.59)
 )
 
 dati$percentuale <- scales::percent(dati$valore / sum(dati$valore))
@@ -94,12 +119,12 @@ ggplot(dati, aes(x = "", y = valore, fill = categoria, label = percentuale)) +
 
 #Confronto prezzo benzina e gasolio
 ggplot() +
-  geom_line(data = prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group=1), color = "blue", size = 1) +  # Grafico dei prezzi
-  geom_line(data = prezzoG_annuale, aes(x = mese, y = PREZZO,group=1), color = "red", size = 1) +  # Grafico dell'IVA
+  geom_line(data = prezzi_annuali_benzina, aes(x = mese, y = PREZZO,group=1), color = "blue", size = 1) +  
+  geom_line(data = prezzoG_annuale, aes(x = mese, y = PREZZO,group=1), color = "red", size = 1) +  
   labs(
-    title = "Confronto Prezzo benzina e gasolio",
-    x = "Mese e Anno",
-    y = "Prezzo"
+    title = "Comparison between petrol price and diesel price",
+    x = "Date",
+    y = "Price"
   ) +theme_minimal()+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
@@ -118,9 +143,9 @@ corrente_italia$Price..EUR.MWhe. <- NULL
 ggplot(corrente_italia, aes(x = Date, y = Prezzo,group=1)) +
   geom_line(color = "blue", size = 1) +
   labs(
-    title = "Prezzo elettricità in Italia MWh",
-    x = "Data",
-    y = "Prezzo"
+    title = "Price variation of electricity from 2019 to 2023 in Italy (MWh)",
+    x = "Date",
+    y = "Price"
   ) +
   theme_minimal()+theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
@@ -131,11 +156,19 @@ ggplot() +
   geom_line(data = prezzoG_annuale, aes(x = mese, y = PREZZO,group=1), color = "red", size = 1) +  
   geom_line(data = corrente_italia, aes(x = mese_anno, y = Prezzo2,group=1), color = "green", size = 1) + 
   labs(
-    title = "Confronto Andamento benzina, gasolio e corrente elettrica",
-    x = "Mese e Anno",
-    y = "Prezzo scalato"
+    title = "Comparison between price trend of petrol,diesel and electricity from 2019 to 2023",
+    x = "Date",
+    y = "Price"
   ) +theme_minimal()+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+#riassunto andamento prezzi su periodo
+ggplot(corrente_italia, aes(factor(Anno), Prezzo)) + geom_boxplot() +
+  labs(
+    title= "Price variation of electricity from 2019 to 2023 (Mwh)",
+    x = "Year", 
+    y = "Price")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 
 
 
 media_costo_carburante<- bind_rows(benzina_data, gasolio_data)
@@ -172,9 +205,6 @@ print(media_prezzi_carburante)
 
 carburante <- media_prezzi_carburante[media_prezzi_carburante$ANNO >= 2019, ]
 
-ggplot(data = media_prezzi_carburante, aes(x = factor(ANNO), y = Media_Prezzo, fill = Mese)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Anno", y = "Prezzo") +
-  theme_minimal()
+
 
 

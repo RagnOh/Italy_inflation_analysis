@@ -13,7 +13,7 @@ ggplot(goods_prices, aes(x = date, y=non_energy_industrial)) + geom_point()+ geo
 #Correlation with fuels
 
 ggplot(data.frame(X = normalized_non_energy, Y = normalized_carburante), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between fuels and Non energy industrial goods", x = "Normalized Non energy industrial goods", y = "Normalized fuels")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -34,7 +34,7 @@ ggplot() +
 
 #Correlation with electricity
 ggplot(data.frame(X = normalized_non_energy, Y = normalized_corrente), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between electricity and Non energy industrial goods", x = "Normalized Non energy industrial goods", y = "Normalized electricity")
 
 # Calcola il coefficiente di correlazione di Pearson
@@ -52,3 +52,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore indice durante l'anno
+ggplot(goods_prices, aes(factor(ANNO), non_energy_industrial)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of non energy industrial goods from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

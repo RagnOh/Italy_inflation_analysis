@@ -53,3 +53,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore durante anno
+ggplot(goods_prices, aes(factor(ANNO), processed_food)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of processed from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

@@ -2,6 +2,7 @@
 
 normalized_alcol <- (goods_prices$alcol_food - min(goods_prices$alcol_food)) / (max(goods_prices$alcol_food) - min(goods_prices$alcol_food))
 
+scaled_alcol<-scale(goods_prices$alcol_food)
 
 
 ggplot(goods_prices, aes(x = date, y=alcol_food)) + geom_point()+ geom_smooth() +
@@ -13,12 +14,16 @@ ggplot(goods_prices, aes(x = date, y=alcol_food)) + geom_point()+ geom_smooth() 
 #Correlation with fuels
 
 ggplot(data.frame(X = normalized_alcol, Y = normalized_carburante), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() +  stat_smooth(method = lm)+
   labs(title = "Correlation between fuels and food including alcol", x = "Normalized food_including_alcol", y = "Normalized fuels")
 
 # Calcola il coefficiente di correlazione di Pearson
 correlation_coefficient <- cor(goods_prices$alcol_food, carburante$Media_Prezzo)
 print(paste("Il coefficiente di correlazione di Pearson è:", correlation_coefficient))
+
+# Calcola il coefficiente di correlazione di Kendall
+correlation_coefficient <- cor(goods_prices$alcol_food, carburante$Media_Prezzo,method = "kendall")
+print(paste("Il coefficiente di correlazione di Kendall è:", correlation_coefficient))
 
 ggplot() +
   geom_line(data = data.frame(Dati=normalized_alcol), aes(x = seq_along(normalized_alcol), y=normalized_alcol ), color = "red", size = 1) +
@@ -34,11 +39,11 @@ ggplot() +
 
 #Correlation with electricity
 ggplot(data.frame(X = normalized_alcol, Y = normalized_corrente), aes(x = X, y = Y)) +
-  geom_point() +
+  geom_point() + stat_smooth(method = lm)+
   labs(title = "Correlation between electricity and food including alcol", x = "Normalized food including alcol", y = "Normalized electricity")
 
 # Calcola il coefficiente di correlazione di Pearson
-correlation_coefficient <- cor(goods_prices$alcol_food, corrente_italia$Prezzo)
+correlation_coefficient <- cor(scaled_alcol, scaled_corrente)
 print(paste("Il coefficiente di correlazione di Pearson è:", correlation_coefficient))
 
 
@@ -52,3 +57,11 @@ ggplot() +
     y = "Normalized value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+
+#Variazione valore durante anno
+ggplot(goods_prices, aes(factor(ANNO), alcol_food)) + geom_boxplot() +
+  labs(
+    title= "Index value variation of food including alcol from 2019 to 2023",
+    x = "Year", 
+    y = "Value")+
+  theme(axis.text.x = element_text(angle = 270, hjust = 0.5)) 

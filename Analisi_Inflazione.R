@@ -107,8 +107,8 @@ goods_prices$low_freq_goods=low_freq_goods
 ggplot() +
   geom_line(data =goods_prices, aes(x = date, y = unprocessed_food ,group = 1 ), color = "blue", size = 1) +  
   geom_line(data =goods_prices, aes(x = date, y = alcol_food, group = 1), color = "red", size = 1) +
-  geom_line(data =goods_prices, aes(x = date, y = processed_food,group = 1 ), color = "orange", size = 1) +
-  geom_line(data =goods_prices, aes(x = date, y = energy, group = 1 ), color = "violet", size = 1) +
+  #geom_line(data =goods_prices, aes(x = date, y = processed_food,group = 1 ), color = "orange", size = 1) +
+ # geom_line(data =goods_prices, aes(x = date, y = energy, group = 1 ), color = "violet", size = 1) +
   geom_line(data =goods_prices, aes(x = date, y = tobacco, group = 1 ), color = "pink", size = 1) +
   geom_line(data =goods_prices, aes(x = date, y = non_energy_industrial, group = 1 ), color = "lightblue", size = 1) +
   geom_line(data =goods_prices, aes(x = date, y = housing_services, group = 1 ), color = "purple", size = 1) +
@@ -117,11 +117,12 @@ ggplot() +
   geom_line(data =goods_prices, aes(x = date, y = transport_service, group = 1 ), color = "black", size = 1) +
   geom_line(data =goods_prices, aes(x = date, y = cleaning_goods, group = 1 ), color = "white", size = 1) +
   geom_line(data =goods_prices, aes(x = date, y = low_freq_goods, group = 1 ), color = "grey", size = 1) +
+
   
   labs(
-    title = "Andamento indici al variare del mese considerato",
-    x = "Data",
-    y = "Prezzo"
+    title = "Trend of the idexes during the considered period",
+    x = "Date",
+    y = "Value"
   ) +
   scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) +
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
@@ -129,90 +130,30 @@ ggplot() +
 normalized_carburante <- (carburante$Media_Prezzo - min(carburante$Media_Prezzo)) / (max(carburante$Media_Prezzo) - min(carburante$Media_Prezzo))
 normalized_corrente <- (corrente_italia$Prezzo - min(corrente_italia$Prezzo)) / (max(corrente_italia$Prezzo) - min(corrente_italia$Prezzo))
 
+scaled_corrente<-corrente_italia$Prezzo
+scaled_carburante<-carburante$Media_Prezzo
+
+#Grafico correlazioni indici con carburanti
+ggplot(data=Pearson_correlation_values, aes(x = ...1 , y = Fuels )) +
+  geom_bar(stat = "identity") +
+  labs(title = "Index value of correlation with fuels prices",
+       x = "Categoria",
+       y = "Valore") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
 
-#Analisi low_freq_goods
-normalized_low_freq_goods <- (low_freq_goods - min(low_freq_goods)) / (max(low_freq_goods) - min(low_freq_goods))
+#Grafico correlazione indici con elettricità
+ggplot(data=Pearson_correlation_values, aes(x = ...1 , y = Electricity )) +
+  geom_bar(stat = "identity") +
+  labs(title = "Index value of correlation with electricity prices",
+       x = "Categoria",
+       y = "Valore") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_low_freq_goods), aes(x = seq_along(normalized_low_freq_goods), y=normalized_low_freq_goods ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e low_frequences_goods 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
+goods_prices$ANNO <- sub(".*\\s(\\d{4})", "\\1", goods_prices$date)
 
-#Analisi housing_services
-normalized_housing_sevices <- (housing_services - min(housing_services)) / (max(housing_services) - min(housing_services))
-
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_housing_sevices), aes(x = seq_along(normalized_housing_sevices), y=normalized_housing_sevices ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e housing_services 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
-
-#Analisi Tobacco
-normalized_tobacco <- (tobacco - min(tobacco)) / (max(tobacco) - min(tobacco))
-
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_tobacco), aes(x = seq_along(normalized_tobacco), y=normalized_tobacco ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e tobacco_related_goods 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red")) 
-
-#Analisi energy
-normalized_energy <- (energy - min(energy)) / (max(energy) - min(energy))
-
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_energy), aes(x = seq_along(normalized_energy), y=normalized_energy ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e energy 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red"))
-
-#Analisi transport
-normalized_transport_service <- (transport_service - min(transport_service)) / (max(transport_service) - min(transport_service))
-
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_transport_service), aes(x = seq_along(normalized_transport_service), y=normalized_transport_service ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e transports_related_goods 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red"))
-
-#unprocessed food
-normalized_unprocessed_food <- (unprocessed_food - min(unprocessed_food)) / (max(unprocessed_food) - min(unprocessed_food))
-
-ggplot() +
-  geom_point(data = data.frame(Dati=normalized_unprocessed_food), aes(x = seq_along(normalized_unprocessed_food), y=normalized_unprocessed_food ), color = "red", size = 1) +
-  geom_line(data = data.frame(Dati=normalized_carburante) , aes(x = seq_along(normalized_carburante), y = normalized_carburante), color = "blue", size = 1) +  # Grafico dei prezzi
-  # Grafico dell'IVA
-  labs(
-    title = "Confronto andamento carburanti e transports_related_goods 2019/2023",
-    x = "Mese considerato",
-    y = "Valore Normalizzato"
-  ) +
-  scale_color_manual(values = c("Prezzo" = "blue", "IVA" = "red"))
-
+# Converte la nuova colonna in formato numerico
+goods_prices$ANNO <- as.numeric(goods_prices$ANNO)
 
