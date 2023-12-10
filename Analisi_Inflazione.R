@@ -136,9 +136,9 @@ scaled_carburante<-carburante$Media_Prezzo
 #Grafico correlazioni indici con carburanti
 ggplot(data=Pearson_correlation_values, aes(x = ...1 , y = Fuels )) +
   geom_bar(stat = "identity") +
-  labs(title = "Index value of correlation with fuels prices",
-       x = "Categoria",
-       y = "Valore") +
+  labs(title = "Index value of correlation with fuels price",
+       x = "Category",
+       y = "Value") +
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
@@ -146,9 +146,9 @@ ggplot(data=Pearson_correlation_values, aes(x = ...1 , y = Fuels )) +
 #Grafico correlazione indici con elettricità
 ggplot(data=Pearson_correlation_values, aes(x = ...1 , y = Electricity )) +
   geom_bar(stat = "identity") +
-  labs(title = "Index value of correlation with electricity prices",
-       x = "Categoria",
-       y = "Valore") +
+  labs(title = "Index value of correlation with electricity price",
+       x = "Category",
+       y = "Value") +
   theme_minimal()+
   theme(axis.text.x = element_text(angle = 270, hjust = 1))
 
@@ -157,3 +157,42 @@ goods_prices$ANNO <- sub(".*\\s(\\d{4})", "\\1", goods_prices$date)
 # Converte la nuova colonna in formato numerico
 goods_prices$ANNO <- as.numeric(goods_prices$ANNO)
 
+#Analisi performances
+Index_gains <-Gains_data[1:(nrow(Gains_data)-3),]
+Index_gains$colore <- ifelse(Index_gains$pandemic < 0, "red", "green")
+Energy_gains <-Gains_data[11:(nrow(Gains_data)),]
+
+#Analisi energia
+ggplot(data=Energy_gains, aes(x = name , y = pandemic )) +
+  geom_bar(stat = "identity",fill="red") +
+  labs(title = "Energy elements performances during pandemic period",
+       x = "Category",
+       y = "Change %") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+ggplot(data=Energy_gains, aes(x = name , y = top )) +
+  geom_bar(stat = "identity",fill="darkgreen") +
+  labs(title = "Energy elements gains from September 2019 to April 2023 ",
+       x = "Category",
+       y = "Change %") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
+
+#Analisi indici
+ggplot(data=Index_gains, aes(x = name , y = pandemic, fill = colore )) +
+  geom_bar(stat = "identity") +
+  labs(title = "Indexes performances during pandemic period",
+       x = "Category",
+       y = "Change %") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))+
+  scale_fill_manual(values = c("darkgreen", "red"))
+
+ggplot(data=Index_gains, aes(x = name , y = top )) +
+  geom_bar(stat = "identity", fill="darkgreen") + 
+  labs(title = "Indexes gains from september 2019 to April 2023 ",
+       x = "Category",
+       y = "Change %") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 270, hjust = 1))
